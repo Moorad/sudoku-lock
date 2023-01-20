@@ -35,13 +35,13 @@ Manually run the binary:
 Sudoku:
 
 -   [x] Display a test board
+-   [ ] Randomly generate boards
 -   [ ] Add a cursor to the board
 -   [ ] Add a simple move cursor system
 -   [ ] Add a simple placing system
 -   [ ] Add a board solution checker
 -   [ ] Implement board solving algorithm
 -   [ ] Add proper feedback system (including errors)
--   [ ] Randomly generate boards
 -   [ ] Generate a key from a sudoku board solution
 -   [ ] Create a set of sudoku boards that could be switched between
 -   [ ] Add a config file

@@ -6,6 +6,40 @@ pub struct SudokuBoard {
 }
 
 impl SudokuBoard {
+    // Get row by index
+    pub fn row(&self, index: usize) -> Option<&[i32; 9]> {
+        self.board.get(index)
+    }
+
+    // Get col by index
+    pub fn col(&self, index: usize) -> Option<[&i32; 9]> {
+        let mut col: [&i32; 9] = [&0; 9];
+
+        for (i, elem) in self.board.iter().enumerate() {
+            col[i] = elem.get(index)?;
+        }
+
+        Some(col)
+    }
+
+    // Get 3x3 box by x and y index
+    pub fn grid_box(&self, x: usize, y: usize) -> Option<[&i32; 9]> {
+        let abs_x = x * 3;
+        let abs_y = y * 3;
+        let mut _box: [&i32; 9] = [&0; 9];
+
+        let mut index = 0;
+        for i in 0..3 {
+            for j in 0..3 {
+                _box[index] = self.board.get(abs_y + i)?.get(abs_x + j)?;
+                index += 1;
+            }
+        }
+
+        Some(_box)
+    }
+
+    // Displays the sudoku board
     pub fn display(&self) {
         let mut horizontal_separator = String::new();
         horizontal_separator.push('|');
@@ -39,5 +73,19 @@ impl SudokuBoard {
                 println!("{}", horizontal_separator)
             }
         }
+    }
+
+    // Check current state of board follows sudoku rules
+    pub fn is_safe(&self) {
+        // for i in self.board
+    }
+
+    // Returns a new board that is solved
+    pub fn solution(&self) -> SudokuBoard {
+        let mut solution = SudokuBoard { board: self.board };
+
+        solution.board[0][0] = 0;
+
+        solution
     }
 }

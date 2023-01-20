@@ -32,4 +32,5 @@ fn main() {
     };
 
     my_other_sudoku.display();
+    println!("{:?}", my_other_sudoku.grid_box(3, 3))
 }
