@@ -34,7 +34,7 @@ Manually run the binary:
 
 Sudoku:
 
--   [ ] Display a test board
+-   [x] Display a test board
 -   [ ] Add a cursor to the board
 -   [ ] Add a simple move cursor system
 -   [ ] Add a simple placing system
