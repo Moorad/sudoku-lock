@@ -1,4 +1,4 @@
-use std::cmp::Ordering;
+use std::{cmp::Ordering, collections::HashMap};
 
 #[derive(Debug)]
 pub struct SudokuBoard {
@@ -76,8 +76,61 @@ impl SudokuBoard {
     }
 
     // Check current state of board follows sudoku rules
-    pub fn is_safe(&self) {
-        // for i in self.board
+    pub fn is_safe(&self) -> bool {
+        fn check_array_is_safe(arr: &[i32; 9]) -> bool {
+            let mut unseen = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+            for cell in arr {
+                if cell == &0 {
+                    continue;
+                }
+
+                // We check if value is in unseen
+                // If it is remove, otherwise value was seen
+                // therefore board invalid
+                if unseen.contains(cell) {
+                    unseen.retain(|x| x != cell);
+                } else {
+                    return false;
+                }
+            }
+
+            true
+        }
+        for i in 0..9 {
+            match self.row(i) {
+                // if index was valid
+                Some(row) => {
+                    if !check_array_is_safe(row) {
+                        return false;
+                    }
+                }
+                None => return false,
+            }
+
+            // Same exact thing for cols
+            match self.col(i) {
+                Some(col) => {
+                    if !check_array_is_safe(&col.clone().map(|x| *x)) {
+                        return false;
+                    }
+                }
+                None => return false,
+            }
+
+            let x = i % 3;
+            let y = i / 3;
+            match self.grid_box(x, y) {
+                Some(_box) => {
+                    if !check_array_is_safe(&_box.clone().map(|x| *x)) {
+                        return false;
+                    }
+                }
+                None => return false,
+            }
+        }
+
+        true
     }
 
     // Returns a new board that is solved

@@ -20,6 +20,7 @@ fn main() {
     let my_other_sudoku = SudokuBoard {
         board: [
             [6, 0, 0, 1, 3, 2, 4, 0, 9],
+            // [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [7, 3, 4, 0, 0, 0, 0, 6, 0],
             [2, 1, 0, 0, 6, 0, 0, 0, 8],
             [9, 0, 6, 8, 0, 0, 0, 4, 5],
@@ -32,5 +33,6 @@ fn main() {
     };
 
     my_other_sudoku.display();
-    println!("{:?}", my_other_sudoku.grid_box(3, 3))
+    // println!("{:?}", my_other_sudoku.grid_box(3, 3))
+    println!("{}", my_other_sudoku.is_safe());
 }
