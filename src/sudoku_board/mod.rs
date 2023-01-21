@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, collections::HashMap};
+use std::cmp::Ordering;
 
 #[derive(Debug)]
 pub struct SudokuBoard {
@@ -37,6 +37,10 @@ impl SudokuBoard {
         }
 
         Some(_box)
+    }
+
+    pub fn place(&mut self, x: usize, y: usize, val: i32) {
+        self.board[y][x] = val;
     }
 
     // Displays the sudoku board
@@ -78,7 +82,7 @@ impl SudokuBoard {
     // Check current state of board follows sudoku rules
     pub fn is_safe(&self) -> bool {
         fn check_array_is_safe(arr: &[i32; 9]) -> bool {
-            let mut unseen = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
+            let mut unseen: Vec<i32> = (1..10).collect();
 
             for cell in arr {
                 if cell == &0 {
@@ -134,11 +138,52 @@ impl SudokuBoard {
     }
 
     // Returns a new board that is solved
-    pub fn solution(&self) -> SudokuBoard {
+    pub fn solution(&self) -> Option<SudokuBoard> {
         let mut solution = SudokuBoard { board: self.board };
 
-        solution.board[0][0] = 0;
+        fn recursive_solve(current_board: &mut SudokuBoard) -> bool {
+            let possibilities: Vec<i32> = (1..10).collect();
 
-        solution
+            // Find an empty cell
+            for i in 0..9 {
+                for j in 0..9 {
+                    let current_cell = &current_board.board[i][j];
+
+                    // Checks if cell is empty
+                    if current_cell == &0 {
+                        let mut iter = possibilities.iter();
+
+                        // Go through possible solutions for empty cell
+                        loop {
+                            // try placing, and check if its safe
+                            // if safe recurse to next empty cell
+                            // otherwise set placed cell back to empty and try next possibility
+                            match iter.next() {
+                                Some(val) => current_board.place(j, i, val.clone()),
+                                None => return false,
+                            };
+
+                            if current_board.is_safe() {
+                                if recursive_solve(current_board) {
+                                    return true;
+                                }
+                            }
+
+                            current_board.place(j, i, 0);
+                            continue;
+                        }
+                    }
+                }
+            }
+            true
+        }
+
+        let found_solution = recursive_solve(&mut solution);
+
+        if !found_solution {
+            return None;
+        }
+
+        Some(solution)
     }
 }

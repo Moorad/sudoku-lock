@@ -32,7 +32,9 @@ fn main() {
         ],
     };
 
-    my_other_sudoku.display();
+    // my_other_sudoku.display();
     // println!("{:?}", my_other_sudoku.grid_box(3, 3))
-    println!("{}", my_other_sudoku.is_safe());
+    // println!("{}", my_other_sudoku.is_safe());
+    my_other_sudoku.display();
+    my_other_sudoku.solution().unwrap().display();
 }
