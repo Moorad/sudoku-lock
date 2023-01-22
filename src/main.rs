@@ -23,5 +23,5 @@ fn main() {
     let random_sudoku = SudokuBoard::random();
     // random_sudoku.display();
     // println!("{}", random_sudoku.is_safe())
-    my_sudoku.display();
+    random_sudoku.solution().unwrap().display();
 }
