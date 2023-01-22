@@ -1,11 +1,87 @@
 use std::cmp::Ordering;
 
+use rand::{seq::SliceRandom, thread_rng};
+
 #[derive(Debug)]
 pub struct SudokuBoard {
-    pub board: [[i32; 9]; 9],
+    board: [[i32; 9]; 9],
 }
 
 impl SudokuBoard {
+    pub fn new() -> SudokuBoard {
+        SudokuBoard {
+            board: [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ],
+        }
+    }
+
+    pub fn from(board_structure: [[i32; 9]; 9]) -> SudokuBoard {
+        let board = SudokuBoard {
+            board: board_structure,
+        };
+
+        if !board.is_safe() {
+            panic!("The board structure given does not follow the sudoku rules");
+        }
+
+        board
+    }
+
+    pub fn random() -> SudokuBoard {
+        let mut board = SudokuBoard::new();
+
+        fn recursive_create(current_board: &mut SudokuBoard) -> bool {
+            let mut rng = thread_rng();
+            let mut possibilities: Vec<i32> = (1..10).collect();
+            possibilities.shuffle(&mut rng);
+
+            // Find an empty cell
+            for i in 0..9 {
+                for j in 0..9 {
+                    let current_cell = &current_board.board[i][j];
+
+                    // Checks if cell is empty
+                    if current_cell == &0 {
+                        let mut iter = possibilities.iter();
+
+                        // Go through possible solutions for empty cell
+                        loop {
+                            // try placing, and check if its safe
+                            // if safe recurse to next empty cell
+                            // otherwise set placed cell back to empty and try next possibility
+                            match iter.next() {
+                                Some(val) => current_board.place(j, i, val.clone()),
+                                None => return false,
+                            };
+
+                            if current_board.is_safe() {
+                                if recursive_create(current_board) {
+                                    return true;
+                                }
+                            }
+
+                            current_board.place(j, i, 0);
+                            continue;
+                        }
+                    }
+                }
+            }
+            true
+        }
+
+        recursive_create(&mut board);
+        board
+    }
+
     // Get row by index
     pub fn row(&self, index: usize) -> Option<&[i32; 9]> {
         self.board.get(index)
@@ -138,6 +214,7 @@ impl SudokuBoard {
     }
 
     // Returns a new board that is solved
+    // Using backtracking algorithm (DFS)
     pub fn solution(&self) -> Option<SudokuBoard> {
         let mut solution = SudokuBoard { board: self.board };
 
