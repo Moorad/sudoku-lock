@@ -1,4 +1,50 @@
+use std::io::{Stdout, Write};
+
 use rand::{seq::SliceRandom, thread_rng};
+use termion::{color, raw::RawTerminal};
+
+pub struct Cursor {
+    x: usize,
+    y: usize,
+}
+
+impl Cursor {
+    pub fn new() -> Cursor {
+        Cursor { x: 4, y: 4 }
+    }
+
+    pub fn right(&mut self) {
+        self.x = self.x + 1;
+
+        if self.x > 8 {
+            self.x = 8;
+        }
+    }
+
+    pub fn left(&mut self) {
+        if self.x == 0 {
+            return ();
+        }
+
+        self.x = self.x - 1;
+    }
+
+    pub fn up(&mut self) {
+        if self.y == 0 {
+            return ();
+        }
+
+        self.y = self.y - 1;
+    }
+
+    pub fn down(&mut self) {
+        self.y = self.y + 1;
+
+        if self.y > 8 {
+            self.y = 8;
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 pub struct SudokuBoard {
@@ -151,7 +197,7 @@ impl SudokuBoard {
     }
 
     // Displays the sudoku board
-    pub fn display(&self) {
+    pub fn display(&self, stdout: &mut RawTerminal<Stdout>, cursor: &Cursor) {
         let mut horizontal_separator = String::new();
         horizontal_separator.push('|');
         // 9 is each number each taking 3 with whitespace + 2 pipes
@@ -160,29 +206,40 @@ impl SudokuBoard {
 
         for (row_index, row) in self.board.iter().enumerate() {
             if row_index % 3 == 0 {
-                println!("{}", horizontal_separator)
+                write!(stdout, "{}\n\r", horizontal_separator).unwrap();
             }
 
             for (elem_index, element) in row.iter().enumerate() {
                 // This handles the pipes every 3 elements
                 // Also handles first row, left pipe because 3 % 0 == 0
                 if elem_index % 3 == 0 {
-                    print!("|")
+                    write!(stdout, "|").unwrap();
                 }
 
+                let mut value = format!(" {} ", element.value());
                 if element.value() == 0 {
-                    print!(" . ");
+                    value = " . ".to_string();
+                }
+
+                if elem_index == cursor.x && row_index == cursor.y {
+                    write!(
+                        stdout,
+                        "{}{}{}",
+                        color::Bg(color::Blue),
+                        value,
+                        color::Bg(color::Reset)
+                    )
+                    .unwrap();
                 } else {
-                    print!(" {} ", element.value());
+                    write!(stdout, "{}", value).unwrap();
                 }
 
                 if elem_index == 8 {
-                    print!("|")
+                    write!(stdout, "|\n\r").unwrap();
                 }
             }
-            print!("\n");
             if row_index == 8 {
-                println!("{}", horizontal_separator)
+                write!(stdout, "{}\n\r", horizontal_separator).unwrap();
             }
         }
     }

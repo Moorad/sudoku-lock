@@ -37,8 +37,8 @@ Sudoku:
 -   [x] Display a test board
 -   [x] Add board validity check
 -   [x] Randomly generate boards
--   [ ] Add a cursor to the board
--   [ ] Add a simple move cursor system
+-   [x] Add a cursor to the board
+-   [x] Add a simple move cursor system
 -   [ ] Add a simple placing system
 -   [ ] Add a board solution checker
 -   [ ] Implement board solving algorithm
