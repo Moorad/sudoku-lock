@@ -1,18 +1,16 @@
 use std::io::{stdin, stdout, Stdin, Stdout, Write};
 
-use sudoku_board::{Cursor, SudokuBoard};
+use game::Game;
 use termion::{
-    clear, cursor,
+    clear, cursor as termion_cursor,
     event::{Event, Key},
     input::TermRead,
     raw::{IntoRawMode, RawTerminal},
 };
-mod sudoku_board;
 
-struct Game {
-    sudoku_board: SudokuBoard,
-    cursor: Cursor,
-}
+mod cursor;
+mod game;
+mod sudoku_board;
 
 fn main() {
     let stdin = stdin();
@@ -24,21 +22,7 @@ fn main() {
 fn init(stdout: &mut RawTerminal<Stdout>, stdin: Stdin) {
     write!(stdout, "{}", clear::All).unwrap();
 
-    let mut game = Game {
-        // sudoku_board: SudokuBoard::random(),
-        sudoku_board: SudokuBoard::from([
-            [6, 0, 0, 1, 3, 2, 4, 0, 9],
-            [7, 3, 4, 0, 0, 0, 0, 6, 0],
-            [2, 1, 0, 0, 6, 0, 0, 0, 8],
-            [9, 0, 6, 8, 0, 0, 0, 4, 5],
-            [8, 5, 1, 3, 0, 0, 7, 0, 0],
-            [0, 0, 0, 2, 0, 0, 0, 0, 1],
-            [0, 0, 0, 4, 0, 0, 0, 0, 3],
-            [3, 4, 0, 9, 0, 5, 0, 8, 0],
-            [1, 9, 0, 6, 8, 0, 0, 5, 0],
-        ]),
-        cursor: Cursor::new(),
-    };
+    let mut game = Game::custom_test();
 
     redraw(stdout, &game);
 
@@ -61,6 +45,6 @@ fn init(stdout: &mut RawTerminal<Stdout>, stdin: Stdin) {
 }
 
 fn redraw(stdout: &mut RawTerminal<Stdout>, game: &Game) {
-    write!(stdout, "{}", cursor::Goto(1, 1)).unwrap();
+    write!(stdout, "{}", termion_cursor::Goto(1, 1)).unwrap();
     game.sudoku_board.display(stdout, &game.cursor);
 }
